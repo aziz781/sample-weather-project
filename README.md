@@ -7,3 +7,8 @@ It get current weather data from OpenWeatherMap.org and user can get the weater 
 ```
 mvn spring-boot:run
 ```
+
+# URL 
+```
+http://localhost:8080/web
+```
