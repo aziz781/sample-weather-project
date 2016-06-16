@@ -25,6 +25,7 @@ public class OpenWeatherService implements WeatherService{
 
 	private static final Logger log = LoggerFactory.getLogger(OpenWeatherService.class);
 
+	@Override
 	public WeatherData getCurrentWeather(String city) {
 
 		try{
@@ -52,7 +53,7 @@ public class OpenWeatherService implements WeatherService{
 		// city
 		data.setCityName(cwd.getCityName());
 		// today date
-		data.setCurrentDate(getDateStr(cwd.getDateTime()));
+		data.setCurrentDate(getDateStr(cwd.getDateTime(),cwd.getCityName()));
 		// weather desc
 		data.setWeatherDesc(weather.getWeatherDescription());
 		// max./min. temperature
@@ -63,26 +64,26 @@ public class OpenWeatherService implements WeatherService{
 				+ "/" + convertFahrenheitToCelsius(cwd.getMainInstance().getMinTemperature()) + "\'C");
 
 		// sun rise
-		data.setSunrise(getTimeStr(sys.getSunriseTime()));
+		data.setSunrise(getTimeStr(sys.getSunriseTime(),cwd.getCityName()));
 		// sun set
-		data.setSunset(getTimeStr(sys.getSunsetTime()));
+		data.setSunset(getTimeStr(sys.getSunsetTime(),cwd.getCityName()));
 		return data;
 	}
 
-	private  String getTimeStr(Date date)
+	private  String getTimeStr(Date date,String city)
 	{
 		Instant instant = date.toInstant();
-		ZonedDateTime zdt = instant.atZone(ZoneId.systemDefault());
+		ZonedDateTime zdt = instant.atZone(getZoneId(city));
 		LocalTime localTime = zdt.toLocalTime();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a");
 		String timeStr = localTime.format(formatter);
 		return timeStr;
 	}
 
-	private  String getDateStr(Date date)
+	private  String getDateStr(Date date,String city)
 	{
 		Instant instant = date.toInstant();
-		ZonedDateTime zdt = instant.atZone(ZoneId.systemDefault());
+		ZonedDateTime zdt = instant.atZone(getZoneId(city));
 		LocalDate localDate = zdt.toLocalDate();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		String dateStr = localDate.format(formatter);
@@ -93,5 +94,16 @@ public class OpenWeatherService implements WeatherService{
 	{
 		float celsiusValue =  ((fahrenheitValue - 32)*5)/9;
 		return String.format("%.2f", celsiusValue);
+	}
+
+	private ZoneId getZoneId(final String city)
+	{
+		if("London".equals(city))
+			return ZoneId.of("Europe/London");
+		else if("Hong Kong".equals(city))
+			return ZoneId.of("Asia/Hong_Kong");
+		else
+			return ZoneId.systemDefault();
+
 	}
 }
