@@ -1,4 +1,4 @@
-# sample-weather-project website
+# sample-weather-project website ![build](https://travis-ci.org/aziz781/sample-weather-project.svg?branch=master)
 It get current weather data from OpenWeatherMap.org and user can get the weater data for the following cities: 
 - London
 - Hong Kong
